@@ -112,9 +112,10 @@
 <script th:inline="javascript">
 
     var userType = localStorage.getItem("userType");
+    var userPermission = localStorage.getItem("userPermission");
 
     function requestData(){
-        if(userType === "student"){
+        if(userType === "student" && userPermission === "true"){
             $.ajax({
                 url: "/exam/search",
                 type: "post",
@@ -124,6 +125,8 @@
                     showPapers(data);
                 }
             })
+        } else {
+            alert("您暂无权限");
         }
     }
 

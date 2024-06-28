@@ -129,14 +129,14 @@
     var userPermission = localStorage.getItem("userPermission");
 
     function showQuestions(data){
-        if(userType == "admin" || (userType == "teacher" && userPermission == "true")){
+        if(userType === "admin" || (userType === "teacher" && userPermission === "true")){
             //document.getElementById("questionList").innerHTML = "这是题库";
             var str = "";
             //定义用于拼接的字符串
             for (var i = 0; i < data.length; i++) {
                 var classify;
-                if(data[i].type == "true_false")    classify = "判断题";
-                else if(data[i].type == "choice")    classify = "选择题";
+                if(data[i].type === "true_false")    classify = "判断题";
+                else if(data[i].type === "choice")    classify = "选择题";
                 else    classify = "简答题";
                 //拼接表格的行和列
                 var question = data[i].question;
@@ -150,9 +150,8 @@
                 //追加到table中
                 $("#questionList").append(str);
             }
-        }
-        else{
-            //document.getElementById("questionList").innerHTML = "您没有查看题库的权限！";
+        } else {
+            alert("您暂无权限");
         }
     }
 

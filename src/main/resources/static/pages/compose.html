@@ -118,10 +118,10 @@
     <button class="bottom-button" onclick="showPapers()">查看试卷</button>
 </div>
 <script th:inline="javascript">
+    var userType = localStorage.getItem("userType");
     function createPaper(){
-        var userType = localStorage.getItem("userType");
         if(userType != "admin"){
-            //document.getElementById("questionList").innerHTML = "您没有组卷的权限！";
+            alert("您暂无权限");
         }
         else{
             //document.getElementById("questionList").innerHTML = "组卷";
@@ -162,20 +162,14 @@
     }
 
     function showPapers(){
-        $.ajax({
-            async: false,
-            success: function() {
-                var url = "mypapers.html"; // 要在新窗口中打开的 URL
-                var windowName = "我的试卷"; // 新窗口的名称，可以自定义
-                let newPage = window.open(url, windowName);
-                newPage.location.reload(true);
-            },
-            error: function(xhr, status, error) {
-                // 请求错误处理
-                console.log(error);
-                alert("error");
-            }
-        })
+        if(userType !== "admin"){
+            alert("您暂无权限");
+        } else {
+            var url = "mypapers.html"; // 要在新窗口中打开的 URL
+            var windowName = "我的试卷"; // 新窗口的名称，可以自定义
+            let newPage = window.open(url, windowName);
+            newPage.location.reload(true);
+        }
     }
 </script>
 </body>

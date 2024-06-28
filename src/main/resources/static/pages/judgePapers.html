@@ -112,9 +112,10 @@
 <script th:inline="javascript">
 
     var userType = localStorage.getItem("userType");
+    var userPermission = localStorage.getItem("userPermission");
 
     function requestData(){
-        if(userType === "teacher"){
+        if(userType === "teacher" && userPermission === "true"){
             $.ajax({
                 url: "/exam/stuSearch",
                 type: "post",
@@ -129,6 +130,8 @@
                     alert("error");
                 }
             })
+        } else {
+            alert("您暂无权限");
         }
     }
 

@@ -27,13 +27,23 @@ import java.util.ArrayList;
 @RequestMapping("/user")
 @RestController
 public class UserController extends Connector {
-    public ArrayList<User> search() throws SQLException {
+    @RequestMapping("/search")
+    public void search(HttpServletResponse resp) throws SQLException, IOException {
         ResultSet rs = findUsers();
         ArrayList<User> ls = new ArrayList<>();
         while (rs.next()) {
-            ls.add(create(rs));
+            User user = create(rs);
+            ls.add(user);
         }
-        return ls;
+        /*将list集合装换成json对象*/
+        JSONArray data = JSONArray.fromObject(ls);
+        //接下来发送数据
+        //  /*设置编码，防止出现乱码问题*/
+        resp.setCharacterEncoding("utf-8");
+        /*得到输出流*/
+        PrintWriter respWriter = resp.getWriter();
+        /*将JSON格式的对象toString()后发送*/
+        respWriter.append(data.toString());
     }
 
     public User create(ResultSet rs) throws SQLException {
@@ -115,5 +125,14 @@ public class UserController extends Connector {
             pstmt.executeUpdate();
             return 3;
         }
+    }
+
+    @RequestMapping("/changePermission")
+    public void changePermission(@RequestParam("user")String name, @RequestParam("permission")boolean permission) throws SQLException {
+        ResultSet rs = findUser(name);
+        rs.next();
+        User user = create(rs);
+        user.setPermission(!permission);
+        modify(user);
     }
 }

@@ -31,7 +31,7 @@ public abstract class Connector {
     }
 
     public ResultSet findUsers() throws SQLException {
-        String sql = "SELECT * FROM user WHERE type <> admin";
+        String sql = "SELECT * FROM user WHERE type <> 'admin'";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         ResultSet rs = pstmt.executeQuery();
         return rs;

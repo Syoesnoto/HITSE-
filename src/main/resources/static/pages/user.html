@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>用户页</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .button {
             margin-top: 20px;
@@ -60,9 +61,27 @@
             height: 70vh; /* 设置容器高度为视窗高度 */
             font-size: 32px;
         }
+
+        table {
+            font-family: Arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
     </style>
 </head>
-<body onload="showUserDetails()">
+<body onload="requestData()">
 <div class="toolbar">
     <h1>题库管理与在线考试系统</h1>
     <nav>
@@ -78,16 +97,36 @@
 </div>
 <div class="container">
     <h2 id="userLog"></h2>
-    <!-- 这里可以添加其他内容 -->
+    <table id="userList">
+        <tbody>
+        </tbody>
+    </table>
     <button onclick="logout()" class="button" id="logoutButton"></button>
 </div>
 <script type="text/javascript">
+    function requestData(){
+        $.ajax({
+            url: "/user/search",
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                showUserDetails(data);
+            }
+        })
+    }
+
+
     //页面刚加载的时候，开始判断，如果有用户名，就显示在页面上，如果没有用户名的话，就显示登录名称
-    function showUserDetails(){
+    function showUserDetails(data){
         var type = localStorage.getItem("userType");
         if(type == "admin"){
             document.getElementById("userLog").innerHTML = "管理员";
             document.getElementById("logoutButton").innerHTML = "退出登录";
+            $("#userList").append("<tr><td><strong>用户</strong></td><td><strong>权限</strong></td><td><strong>修改权限</strong></td></tr>");
+            for (var i = 0; i < data.length; i++) {
+                var str = "<tr><td>" + data[i].name + "</td><td>" + data[i].permission + "</td><td>" + "<button onclick=\"modify(\'" + data[i].name + "\',\'" + data[i].permission + "\')\">切换权限</button>" + "</td>/tr";
+                $("#userList").append(str);
+            }
         }
         else if(type == "teacher"){
             document.getElementById("userLog").innerHTML = "教师";
@@ -102,6 +141,7 @@
             document.getElementById("logoutButton").innerHTML = "去登录";
         }
     }
+
     function logout(){
         var type = localStorage.getItem("userType");
         localStorage.removeItem("userName");
@@ -110,6 +150,27 @@
             alert("退出登录!");
         }
         window.location.href = "login.html";
+    }
+
+    function modify(user, permission){
+        $.ajax({
+            method: "post",
+            url: "/user/changePermission",  // 服务器端API的URL
+            data: { // 提交数据
+                "user": user,
+                "permission": permission
+            },
+            async: false,
+            success: function() {
+                alert("更改成功");
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                // 请求错误处理
+                console.log(error);
+                alert("error");
+            }
+        })
     }
 </script>
 </body>
